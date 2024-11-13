@@ -58,7 +58,7 @@ Route::delete('/contact/force-delete/{id}', [ContactController::class, 'forceDel
 Route::get('/contact/details/{id}', [ContactController::class, 'show'])->name('contacts.show');
 
 //Routes for Accounts CRUD
-//account details -> its in show function
+//account details -> its inside show function
 Route::resource('/accounts', AccountController::class);
 Route::get('/account/trashed', [AccountController::class, 'trashed'])->name('accounts.trashed');
 Route::patch('/account/restore/{id}', [AccountController::class, 'restore'])->name('accounts.restore');
