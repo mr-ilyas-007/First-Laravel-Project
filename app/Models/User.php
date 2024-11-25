@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
+// use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -33,22 +33,22 @@ class User extends Authenticatable
 
     protected static function booted()
     {
-        // Log when a user is created
+        // log will get created  when a user is created
         static::created(function ($user) {
             Log::info('User created: ' . $user->name . ' (' . $user->email . ')');
         });
 
-        // Log when a user is updated
+        // log will get created  when a user is updated
         static::updated(function ($user) {
             Log::info('User updated: ' . $user->name . ' (' . $user->email . ')');
         });
 
-        // Log when a user is deleted (soft delete)
+        // log will get created  when a user is deleted (soft delete)
         static::deleted(function ($user) {
             Log::info('User deleted: ' . $user->name . ' (' . $user->email . ')');
         });
 
-        // Log when a user is permanently deleted
+        // log will get created  when a user is permanently deleted
         static::forceDeleted(function ($user) {
             Log::info('User permanently deleted: ' . $user->name . ' (' . $user->email . ')');
         });

@@ -12,4 +12,5 @@ class ContactTag extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $table = 'contact_tag';
+
 }

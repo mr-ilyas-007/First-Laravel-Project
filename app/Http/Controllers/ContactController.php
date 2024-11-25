@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Traits\DynamicFormTrait;
 use App\Models\Tag;
 
+
 class ContactController extends Controller
 {
     use DynamicFormTrait;
@@ -28,56 +29,55 @@ class ContactController extends Controller
         $tags = Tag::all();
         return view('contacts.addContact', compact('fields', 'accounts', 'tags'));
     }
-
     function store(Request $request)
-{
-    $data = $request->validate([
-        'name' => 'required|string|max:191',
-        'phone' => 'required|string|max:191',
-        'address' => 'required|string|max:191',
-        'date_of_birth' => 'required|string|max:191',
-        'account_id' => 'required|exists:accounts,id',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'tags' => 'array', // Validate tags as an array
-        'tags.*' => 'exists:tags,id', // Validate that each tag ID exists in tags table
-    ]);
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:191',
+            'phone' => 'required|string|max:191',
+            'address' => 'required|string|max:191',
+            'date_of_birth' => 'required|string|max:191',
+            'account_id' => 'required|exists:accounts,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'tags' => 'array', // Validate tags as an array
+            'tags.*' => 'exists:tags,id', // Validate that each tag ID exists in tags table
+        ]);
 
-    // Handle image upload if provided
-    $fileName = null;
-    if ($request->hasFile('image')) {
-        $fileName = time() . "Contact_Image." . $request->file('image')->getClientOriginalExtension();
-        $request->file('image')->storeAs('public/images', $fileName);
-    }
-
-    // Create Contact
-    $contact = Contact::create([
-        'id' => Str::uuid()->toString(),
-        'name' => $data['name'],
-        'phone' => $data['phone'],
-        'account_id' => $data['account_id'],
-        'image' => $fileName,
-    ]);
-
-    // Create Profile linked to Contact
-    Profile::create([
-        'id' => Str::uuid()->toString(),
-        'contact_id' => $contact->id,
-        'address' => $data['address'],
-        'date_of_birth' => $data['date_of_birth'],
-    ]);
-
-    // Attach Tags to Contact
-    if (!empty($data['tags'])) {
-        foreach ($data['tags'] as $tagId) {
-            $contactTag = new ContactTag();
-            $contactTag->contact_id = $contact->id;
-            $contactTag->tag_id = $tagId;
-            $contactTag->save();  // Save each tag relation
+        // Handle image upload if provided
+        $fileName = null;
+        if ($request->hasFile('image')) {
+            $fileName = time() . "Contact_Image." . $request->file('image')->getClientOriginalExtension();
+            $request->file('image')->storeAs('public/images', $fileName);
         }
-    }
 
-    return redirect('/contacts')->with('success', 'New Contact Created Successfully!');
-}
+        // Create Contact
+        $contact = Contact::create([
+            'id' => Str::uuid()->toString(),
+            'name' => $data['name'],
+            'phone' => $data['phone'],
+            'account_id' => $data['account_id'],
+            'image' => $fileName,
+        ]);
+
+        // Create Profile linked to Contact
+        Profile::create([
+            'id' => Str::uuid()->toString(),
+            'contact_id' => $contact->id,
+            'address' => $data['address'],
+            'date_of_birth' => $data['date_of_birth'],
+        ]);
+
+        // Attach Tags to Contact
+        if (!empty($data['tags'])) {
+            foreach ($data['tags'] as $tagId) {
+                $contactTag = new ContactTag();
+                $contactTag->contact_id = $contact->id;
+                $contactTag->tag_id = $tagId;
+                $contactTag->save();  // Save each tag relation
+            }
+        }
+
+        return redirect('/contacts')->with('success', 'New Contact Created Successfully!');
+    }
 
     function show($id)
     {
@@ -91,30 +91,57 @@ class ContactController extends Controller
     function edit($id)
     {
         $fields = $this->getFormFields('contacts', 'edit');
-        $contact = Contact::find($id);
+        $contact = Contact::with('tag', 'profile')->find($id);
         $accounts = Account::all();
-        return view('contacts.editContact', compact('fields', 'contact', 'accounts'));
+        $tags = Tag::all();
+        // return $contact->profile->date_of_birth;
+        return view('contacts.editContact', compact('fields', 'contact', 'accounts', 'tags'));
     }
 
     function update($id, Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:191',
             'phone' => 'required|string|max:191',
+            'address' => 'required|string|max:191',
+            'date_of_birth' => 'required|string|max:191',
             'account_id' => 'required|exists:accounts,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'tags' => 'array', // Validate tags as an array
+            'tags.*' => 'exists:tags,id', // Validate each tag ID exists in tags table
         ]);
-        $contact = Contact::find($id);
-        $contact->name = $request->name;
-        $contact->phone = $request->phone;
-        $contact->account_id = $request->account_id;
-        $contact->image = $request->image;
 
-        $fielName = time() . "Contact_Image." . $request->file('image')->getClientOriginalExtension();
-        $request->file('image')->storeAs('public/images', $fielName);
+        $contact = Contact::with('profile', 'tag')->findOrFail($id);
+
+        // Handle image upload if a new image is provided
+        if ($request->hasFile('image')) {
+            $fileName = time() . "Contact_Image." . $request->file('image')->getClientOriginalExtension();
+            $request->file('image')->storeAs('public/images', $fileName);
+            $contact->image = $fileName; // Update image path in contact
+        }
+
+        // Update contact details
+        $contact->name = $data['name'];
+        $contact->phone = $data['phone'];
+        $contact->account_id = $data['account_id'];
         $contact->save();
-        return redirect('/contacts');
+
+        // Update associated profile details
+        $contact->profile->update([
+            'address' => $data['address'],
+            'date_of_birth' => $data['date_of_birth'],
+        ]);
+
+        // Update tags by syncing the provided tag IDs
+        if (!empty($data['tags'])) {
+            $contact->tag()->sync($data['tags']);
+        } else {
+            $contact->tag()->detach(); // Detach all tags if none are provided
+        }
+
+        return redirect('/contacts')->with('success', 'Contact updated successfully!');
     }
+
 
     function destroy($id)
     {

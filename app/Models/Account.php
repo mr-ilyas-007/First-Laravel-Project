@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use App\Traits\HasDynamicRelationships;
+// use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class Account extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use HasDynamicRelationships;
+    use HasApiTokens;
 
     public $incrementing = false;
     protected $keyType = 'string';

@@ -12,9 +12,13 @@
             </div>
             <div class="card-body shadow-lg text-center">
                 <!-- User Image -->
-                @if ($contact->image)
-                    <img src="{{ asset('storage/images/' . $contact->image) }}" class="object-fit-cover rounded-circle mb-3" alt="Contact Image"
-                        width="120" height="120">
+                {{-- if (Str::startsWith($string, $substring)) --}}
+                @if ($contact->image && !Str::startsWith($contact->image, 'http'))
+                    <img src="{{ asset('storage/images/' . $contact->image) }}" class="object-fit-cover rounded-circle mb-3"
+                        alt="Contact Image" width="120" height="120">
+                @elseif ($contact->image && Str::startsWith($contact->image, 'http'))
+                    <img src="{{$contact->image}}" class="object-fit-cover rounded-circle mb-3"
+                        alt="Contact Image created by Faker" width="120" height="120">
                 @else
                     <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="User Image" width="120"
                         height="120">
@@ -29,7 +33,8 @@
                     <p><strong>Phone:</strong> {{ $contact->phone ?? 'Phone number not available' }}</p>
                     <p><strong>Company Name:</strong> {{ $contact->account->company_name ?? 'Company name not available' }}
                     </p>
-                    <p><strong>Data Of Birth:</strong> {{ $contact->profile->date_of_birth ?? 'Data of Birth unavailable' }}</p>
+                    <p><strong>Data Of Birth:</strong> {{ $contact->profile->date_of_birth ?? 'Data of Birth unavailable' }}
+                    </p>
                     <p><strong>Address:</strong> {{ $contact->profile->address ?? 'address is not available' }}</p>
                     <!-- Displaying all the  Contact Tags -->
                     <p><strong>Tags:</strong>

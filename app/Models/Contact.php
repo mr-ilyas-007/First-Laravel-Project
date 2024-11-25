@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use App\Traits\HasDynamicRelationships;
+use Laravel\Passport\HasApiTokens;
+// use Laravel\Sanctum\HasApiTokens;
 
 class Contact extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use HasDynamicRelationships;
+    use HasApiTokens;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -25,6 +28,10 @@ class Contact extends Model
         'image',
     ];
 
+    public function setNameAttribute($value){
+        $this->attributes['name'] = ucwords($value);
+    }
+    
     protected static function boot()
     {
         parent::boot();

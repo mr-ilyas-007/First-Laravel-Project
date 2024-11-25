@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -33,6 +34,3 @@ trait HasDynamicRelationships
         throw new \Exception("Relationship '{$name}' not defined in configuration.");
     }
 }
-
-
-

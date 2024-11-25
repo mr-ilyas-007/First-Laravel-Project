@@ -27,6 +27,14 @@ class AuthController extends Controller
 
     function loginPage()
     {
+        // $accountIds = Account::pluck('id')->toArray();
+        // $randomKey = array_rand($accountIds);
+        // $randomId = $accountIds[$randomKey];
+        // echo $randomId; // Output the random ID
+
+        // foreach ($accountIds as $id) {
+        //     echo $id . "<br>";
+        // }
         $fields = $this->getFormFields('login', 'fields');
         return view('frontend.login', compact('fields'));
     }

@@ -14,7 +14,7 @@ class AddAccountIdToContactsTable extends Migration
     public function up()
     {
         Schema::table('contacts', function (Blueprint $table) {
-            $table->uuid('account_id')->after('phone');
+            $table->uuid('account_id')->after('phone')->onDelete('cascade');
         });
     }
 

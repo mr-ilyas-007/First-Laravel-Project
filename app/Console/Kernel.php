@@ -15,8 +15,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('send:email')->everyMinute();
     }
+
+    protected $commands=[
+        Commands\GetDBName::class,
+        Commands\IntervalMail::class,
+    ];
 
     /**
      * Register the commands for the application.

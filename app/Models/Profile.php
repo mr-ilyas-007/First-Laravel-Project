@@ -23,4 +23,7 @@ class Profile extends Model
     {
         return $this->dynamicRelationship('contact_profile');
     }
+    public function getDateOfBirthAttribute($value){
+        return date("d-M-Y", strtotime($value));
+    }
 }

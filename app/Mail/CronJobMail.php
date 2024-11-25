@@ -7,18 +7,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class LoginMail extends Mailable
+class CronJobMail extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $data;
+    protected $messageContent;
+    protected $subjectContent;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($messageContent, $subjectContent)
     {
-        $this->data = $data;
+        $this->messageContent = $messageContent;
+        $this->subjectContent = $subjectContent;
     }
 
     /**
@@ -28,9 +30,6 @@ class LoginMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.email')
-                    ->subject('Sending Mail with Laravel Queue Job feature')
-                    ->from('moinshaikh28504@gmail.com', 'Moin Shaikh')
-                    ->with(['data' => $this->data]);
+        return $this->view('emails.cronjob-mail')->with(['Message'=> $this->messageContent, 'Subject'=> $this->subjectContent]);
     }
 }

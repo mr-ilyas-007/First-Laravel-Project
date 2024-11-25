@@ -19,9 +19,9 @@ return [
         'create' => [
             ['type' => 'text', 'name' => 'name', 'label' => 'Contact Name', 'required' => true],
             ['type' => 'text', 'name' => 'phone', 'label' => 'Phone Number', 'required' => true],
-            ['type' => 'file', 'name' => 'image', 'label' => 'Upload Image', 'required' => true],
             ['type' => 'text', 'name' => 'address', 'label' => 'Enter Address', 'required' => true],
             ['type' => 'date', 'name' => 'date_of_birth', 'label' => 'Enter Date of Birth', 'required' => true],
+            ['type' => 'file', 'name' => 'image', 'label' => 'Upload Image', 'required' => true],
             ['type' => 'select', 'name' => 'account_id', 'label' => 'Company Name', 'options' => 'accounts', 'required' => true],
             ['type' => 'checkbox', 'name' => 'tags[]', 'label' => 'Assign Tags', 'options' => 'tags'],
         ],

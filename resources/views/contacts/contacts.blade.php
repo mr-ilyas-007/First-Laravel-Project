@@ -33,13 +33,13 @@
                         <td>{{ $i++ }}</td>
                         <td>
                             <a href="/contact/details/{{ $con->id }}"
-                                class="text-decoration-none text-primary">{{ $con->name }}</a>
+                                class="text-decoration-underline text-danger">{{ $con->name }}</a>
                         </td>
                         <td>{{ $con->phone }}</td>
                         <td>
                             @if ($con->account)
                                 <a href="{{ route('accounts.show', $con->account->id) }}"
-                                    class="text-decoration-none text-primary">
+                                    class="text-decoration-underline text-danger">
                                     {{ $con->account->company_name }}
                                 </a>
                             @else
@@ -68,4 +68,19 @@
             $('#dataTable').DataTable();
         });
     </script>
+
+    {{-- DataTable({
+    paging: true, // Enable pagination
+    searching: true, // Enable search box
+    ordering: true, // Enable column sorting
+    lengthChange: true, // Allow changing the number of rows shown
+    pageLength: 10, // Set default number of rows per page
+    info: true, // Show table information (e.g., "Showing 1 to 10 of 50 entries")
+    autoWidth: false, // Disable automatic column width calculation
+    responsive: true, // Make the table responsive
+    dom: 'Bfrtip', // Add buttons (e.g., export, print)
+    buttons: [
+        'copy', 'csv', 'excel', 'pdf', 'print' // Export and print options
+    ]
+}); --}}
 @endsection
